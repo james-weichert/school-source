@@ -1,0 +1,439 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf200
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww17200\viewh16580\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html>\
+<head>\
+	<title>SchoolSource</title>\
+\
+	<link rel="icon" type="image/x-icon" href="Assets/favicon.ico" />\
+	<link rel="icon" type="image/png" href="Assets/favicon.png" />\
+\
+\
+	<script type="text/javascript">\
+		var overall = 0;\
+		function tabs(a) \{\
+			if (a == 0) \{\
+				overall = 0;\
+				document.getElementById('ask').style.borderColor = "rgba(239,234,89,1)";\
+				document.getElementById('ask').style.zIndex = 2;\
+				document.getElementById('answer').style.borderColor = "rgba(239,234,89,0)"\
+				document.getElementById('answer').style.zIndex = 0;\
+\
+				document.getElementById('searchField').style.opacity = 0;\
+				document.getElementById('questionSpace').style.opacity = 0;\
+				document.getElementById('parameters').style.opacity = 1;\
+				window.setTimeout(function () \{\
+					document.getElementById('searchField').value = 'Ask Questions, Get Answers';\
+					document.getElementById('searchField').style.opacity = 1;\
+				\}, 300);\
+\
+			\} else if (a == 1) \{\
+				dropup();\
+				getQuestion();\
+				overall = 1;\
+				document.getElementById('ask').style.borderColor = "rgba(239,234,89,0)";\
+				document.getElementById('ask').style.zIndex = 0;\
+				document.getElementById('answer').style.borderColor = "rgba(239,234,89,1)"\
+				document.getElementById('answer').style.zIndex = 2;\
+\
+				document.getElementById('searchField').style.opacity = 0;\
+				document.getElementById('questionSpace').style.opacity = 1;\
+\
+				document.getElementById('parameters').style.opacity = 0;\
+				window.setTimeout(function () \{\
+					document.getElementById('searchField').value = 'Answer Questions, Earn Points';\
+					document.getElementById('searchField').style.opacity = 1;\
+				\}, 300);\
+			\
+			\}\
+		\}\
+		function switchThis() \{\
+			if(overall == 0) \{\
+				postThis();\
+			\} else if(overall == 1) \{\
+				postAnswer();\
+			\}\
+		\}\
+		function postThis() \{\
+			document.getElementById('questionTitle').innerHTML = document.getElementById('searchField').value;\
+\
+			postQuestion();\
+			dropdown();\
+\
+		\}\
+		function postAnswer() \{\
+			var question = document.getElementById('askQuestion').innerHTML;\
+			var answer = document.getElementById('searchField').value;\
+\
+			var thisArray = [question, answer];\
+\
+			var xhttp = new XMLHttpRequest();\
+				xhttp.onreadystatechange = function () \{\
+					setTimeout(function () \{\
+						document.getElementById('searchField').value = "Answer Questions, Earn Points";\
+					\}, 100);\
+					getQuestion();\
+				\}\
+				xhttp.open("GET", "postAnswer.php?r="+JSON.stringify(thisArray),false);\
+				xhttp.send();\
+		\}\
+		function postQuestion() \{\
+			var question = document.getElementById('searchField').value;\
+			var subject = document.getElementById('subject').value;\
+			var teacher = document.getElementById('teacherDrop').value;\
+			\
+			var array = [question, subject, teacher];\
+\
+			var xhttp = new XMLHttpRequest();\
+		                    xhttp.onreadystatechange = function() \{\
+		                       setTimeout(function () \{\
+		                       	document.getElementById('searchField').value = 'Question Submitted.';\
+		            \
+		                       \}, 100);\
+		                       	dropdown();\
+		            	  		\
+		                    \}\
+		                    \
+		                    xhttp.open("POST", "post.php?q="+JSON.stringify(array),false);\
+		                    xhttp.send();\
+\
+		\}\
+		function refresh() \{\
+			var question = document.getElementById('questionTitle').innerHTML;\
+\
+			var xhttp = new XMLHttpRequest();\
+							xhttp.onreadystatechange = function() \{\
+								document.getElementById('responses').innerHTML = this.responseText;\
+							\}\
+							xhttp.open("GET","getAnswers.php?q="+question,false);\
+							xhttp.send();\
+		\}\
+\
+		function getQuestion() \{\
+			var xhttp = new XMLHttpRequest();\
+							xhttp.onreadystatechange = function () \{\
+								document.getElementById('askQuestion').innerHTML = this.responseText;\
+							\}\
+							xhttp.open("GET","getQuestion.php?", false);\
+							xhttp.send();\
+		\}\
+\
+		function dropdown() \{\
+			document.getElementById('parameters').zIndex = -99;\
+			document.getElementById('parameters').style.opacity = 0;\
+			setTimeout(function () \{\
+				document.getElementById('results').style.height = "70%";\
+			\},250);\
+			\
+		\}\
+		function dropup() \{\
+			document.getElementById('results').style.height = "0%";\
+			setTimeout(function () \{\
+				document.getElementById('parameters').zIndex = 2;\
+				document.getElementById('parameters').opacity = "100%";\
+			\}, 250);\
+\
+			 \
+		\}\
+\
+		function teacherMode() \{\
+			document.body.style.backgroundColor = "#14BEBB";\
+			document.getElementById('searchField').style.opacity = 0;\
+				window.setTimeout(function () \{\
+					document.getElementById('searchField').value = 'Search By Keyword';\
+					document.getElementById('searchField').style.opacity = 1;\
+				\}, 300);\
+\
+			document.getElementById('ask').innerHTML = "Search";\
+			document.getElementById('answer').innerHTML = "?";	\
+\
+		\}\
+\
+		function studentMode() \{\
+			document.body.style.backgroundColor = "#ED695D";\
+			document.getElementById('searchField').style.opacity = 0;\
+				window.setTimeout(function () \{\
+					document.getElementById('searchField').value = 'Ask Questions, Get Answers';\
+					document.getElementById('searchField').style.opacity = 1;\
+				\}, 300);\
+\
+			document.getElementById('ask').innerHTML = "Ask";\
+			document.getElementById('answer').innerHTML = "Answer";	\
+		\}\
+\
+	</script>\
+\
+	<style type="text/css">\
+		@import url("https://use.typekit.net/nuq4qnf.css");\
+		body \{\
+			background-color: #ED695D;\
+			overflow-x: hidden;\
+			overflow-y: hidden;\
+			width: 100vw;\
+			height: 100vh;\
+			color: white;\
+			font-family: 'Europa', sans-serif;\
+\
+			-webkit-transition: background-color 1.5s ease;\
+			transition: background-color 1.5s ease;\
+		\}\
+		#mode \{\
+			float: right;\
+			margin-top: 1vw;\
+			margin-right: 3vw;\
+			font-size: 1.8em;\
+		\}\
+		#teacher, #student \{\
+			cursor: pointer;\
+		\}\
+		#logo img\{\
+			width: 45vw;\
+		\}\
+		#main \{\
+			position: absolute;\
+			width: 70vw;\
+			height: 60vh;\
+			top: 50%;\
+			margin-top: -35vh;\
+			left: 50%;\
+			margin-left: -35vw;\
+		\}\
+		#spacer \{\
+			position: relative;\
+			left: 0;\
+			margin-left: 2vw;\
+			width: 100%;\
+			height: 20%;\
+		\}\
+		#questionSpace \{\
+\
+			position: absolute;\
+			bottom: 0;\
+			margin-bottom: -1vw;\
+			opacity: 0;\
+\
+			transition: opacity 0.5s;\
+			-webkit-transition: opacity 0.5s;\
+		\}\
+		#questionSpace h2 \{\
+			font-weight: lighter;\
+			font-size: 1.9em;\
+		\}\
+		#tabs div \{\
+			position: absolute;\
+			right: 2vw;\
+			margin-top: -3vw;\
+			width: 10vw;\
+			height: 3vw;\
+			line-height: 3vw;\
+			font-size: 1.6em;\
+			text-align: center;\
+			border-top-right-radius: 1vw;\
+			border-top-left-radius: 1vw;\
+			cursor: pointer;\
+\
+		\}\
+		#ask \{\
+			background-color: #B0E67F;\
+			margin-right: 10vw;\
+			z-index: 3;\
+			border: solid 0.4vw;\
+			border-color: rgba(239,234,89,1);\
+		\}\
+		#answer \{\
+			background-color: #BA7FE6;\
+			border: solid 0.4vw;\
+			border-color: rgba(239,234,89,0);\
+\
+		\}\
+		#searchbar \{\
+			background-color: #FDF0EF;\
+			position: relative;\
+			width: 100%;\
+			height: 16%;\
+			border-radius: 1.5vw;\
+			color: #717171;\
+			z-index: 4;\
+		\}\
+		input[type=text] \{\
+			color: #717171;\
+			width: 85%;\
+			border: 0;\
+			background-color: rgba(255,255,255,0);\
+			font-size: 2.5em;\
+			left: 0;\
+			margin-left: 2vw;\
+			position: absolute;\
+  			top: 50%;\
+  			transform: translateY(-55%);\
+\
+  			-webkit-transition: opacity 0.3s;\
+  			transition: opacity 0.3s;\
+		\}\
+		#button \{\
+			width: 4vw;\
+			height: 4vw;\
+			border-radius: 100%;\
+			background-color: #4BE1B3;\
+			position: absolute;\
+			right: 0;\
+			top: 50%;\
+			margin-top: -2vw;\
+			margin-right: 1vw;\
+			vertical-align: middle;\
+  			border: 0;\
+		\}\
+		input:focus,\
+		select:focus,\
+		textarea:focus,\
+		button:focus \{\
+    		outline: none;\
+		\}\
+		#parameters \{\
+			margin-top: 1vw;\
+			left: 0;\
+			margin-left: 2vw;\
+			font-size: 1.6em;\
+			opacity: 1;\
+			-webkit-transition; opacity: 0.5s;\
+			transition: opacity 0.5s;\
+		\}\
+		.dropdown \{\
+			border:none;\
+			background-color: rgba(0,0,0,0);\
+			color: #EFEA59;\
+			font-family: 'Europa';\
+			font-size: 1em;\
+		\}\
+		#results \{\
+			background-color: #FDF0EF;\
+			width: 90%;\
+			height: 0%;\
+			margin-left: auto;\
+			margin-right: auto;\
+			z-index: -1;\
+			border-bottom-right-radius: 1vw;\
+			border-bottom-left-radius: 1vw;		\
+			margin-top: -5vw;\
+			color: #717171;\
+			-webkit-transition: height 1s;\
+			transition: height 1s;	\
+			overflow: hidden;\
+		\}\
+		#inner \{\
+			position: relative;\
+			width: 85%;\
+			height: 100%;\
+			margin-left: 5%;\
+			margin-right: 5%;\
+			margin-top: 5%;\
+		\}\
+		#responses \{\
+			line-height: 2em;\
+		\}\
+		#refresh \{\
+			position: relative;\
+			float: right;\
+			top: 0;\
+			width: 5%;\
+			right: 0;\
+			\
+			margin-right: 5%;\
+			margin-top: -38%;\
+\
+		\}\
+		#refresh img\{\
+			width: 100%;\
+		\}\
+		h2 \{\
+			font-weight: lighter;\
+			font-size: 1.9em;\
+		\}\
+		h3 \{\
+			font-weight: lighter;\
+			font-size: 1.5em;\
+			padding: 0;\
+			margin: 0;\
+		\}\
+		.noSelect \{\
+			-webkit-user-select: none;  /* Chrome all / Safari all */\
+  			-moz-user-select: none;     /* Firefox all */\
+  			-ms-user-select: none;      /* IE 10+ */\
+  			user-select: none;\
+		\}\
+		.shadow \{\
+			box-shadow: 3px 2px rgba(0,0,0,0.1);\
+		\}\
+	</style>\
+\
+</head>\
+<body>\
+	<div id="header">\
+		<div id="mode">\
+			<span id="student" class="noSelect" onclick="studentMode()">Student</span> | <span id="teacher" class="noSelect" onclick="teacherMode()">Teacher</span>\
+		</div>\
+	</div>\
+	<div id="main">\
+		<div id="logoContainer">\
+		<div id="logo">\
+			<img src="Assets/SchoolSource.png"/>\
+		</div>\
+			<h3>"The important thing is not to stop questioning" - Albert Einstein</h3>\
+		</div>\
+		<div id="spacer">\
+			<div id="questionSpace">\
+				<h2 id="askQuestion">The Question Will Go Here.</h2>\
+			</div>\
+		</div>\
+		<div id="tabs" class="noSelect">\
+			<div id="ask" class="shadow" onclick="tabs(0)">\
+				Ask\
+			</div>\
+			<div id="answer" class="shadow" onclick="tabs(1)">\
+				Answer\
+			</div>\
+		</div>\
+		<div id="searchbar" class="shadow">\
+			<form>\
+				<input type="text" name="searchbar" autocomplete="off"\
+ onfocus="this.value=''" value="Ask Questions, Get Answers" id="searchField"/>\
+				\
+			</form>\
+			<button onclick="switchThis()" id="button"/></button>\
+		</div>\
+		<div id="parameters">\
+			Subject \
+			<select id="subject" class="dropdown">\
+				<option class="dropOption" value="algebraI">Algebra I</option>	\
+				<option class="dropOption" value="algebraII">Algebra II</option>\
+				<option class="dropOption" value="spanishI">Spanish I</option>\
+				<option class="dropOption" value="english">English</option>\
+				<option class="dropOption" value="physics">Physics</option>\
+			</select>\
+\
+			Teacher\
+			<select id="teacherDrop"class="dropdown">\
+				<option class="dropOption" value="jason">Ms. Jayson</option>\
+				<option class="dropOption" value="snyder">Mr. Snyder</option>\
+				<option class="dropOption" value="boesen">Mr. Boesen</option>\
+				<option class="dropOption" value="knight">Mr. Knight</option>\
+			</select>\
+		</div>\
+		<div id="results" class="shadow" onclick="dropdown()">\
+			<div id="inner">\
+				<em><h2 id="questionTitle">Your Question</h2></em>\
+				<h3>Answers:</h3>\
+				<div id="responses">\
+					No answers quite yet. Click refresh.\
+				</div>\
+			</div>\
+				<div id= "refresh" onclick="refresh()"><img src="Assets/refresh.png"/></div>\
+		</div>\
+	</div>\
+</body>\
+</html>}

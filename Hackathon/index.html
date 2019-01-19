@@ -1,0 +1,545 @@
+<!Doctype html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SchoolSource</title>
+
+	<link rel="icon" type="image/x-icon" href="Assets/favicon.ico" />
+	<link rel="icon" type="image/png" href="Assets/favicon.png" />
+
+
+	<script type="text/javascript">
+		var overall = 0;
+		function tabs(a) {
+			if (a == 0) {
+				overall = 0;
+				document.getElementById('ask').style.borderColor = "rgba(239,234,89,1)";
+				document.getElementById('ask').style.zIndex = 2;
+				document.getElementById('answer').style.borderColor = "rgba(239,234,89,0)"
+				document.getElementById('answer').style.zIndex = 0;
+
+				document.getElementById('searchField').style.opacity = 0;
+				document.getElementById('questionSpace').style.opacity = 0;
+				document.getElementById('parameters').style.opacity = 1;
+				window.setTimeout(function () {
+					document.getElementById('searchField').value = 'Ask Questions, Get Answers';
+					document.getElementById('searchField').style.opacity = 1;
+				}, 300);
+
+			} else if (a == 1) {
+				dropup();
+				getQuestion();
+				overall = 1;
+				document.getElementById('ask').style.borderColor = "rgba(239,234,89,0)";
+				document.getElementById('ask').style.zIndex = 0;
+				document.getElementById('answer').style.borderColor = "rgba(239,234,89,1)"
+				document.getElementById('answer').style.zIndex = 2;
+
+				document.getElementById('searchField').style.opacity = 0;
+				document.getElementById('questionSpace').style.opacity = 1;
+
+				document.getElementById('parameters').style.opacity = 0;
+				window.setTimeout(function () {
+					document.getElementById('searchField').value = 'Answer Questions, Earn Points';
+					document.getElementById('searchField').style.opacity = 1;
+				}, 300);
+			
+			}
+		}
+		function switchThis() {
+			if(overall == 0) {
+				postThis();
+			} else if(overall == 1) {
+				postAnswer();
+			}
+		}
+		function postThis() {
+			document.getElementById('questionTitle').innerHTML = document.getElementById('searchField').value;
+
+			postQuestion();
+			dropdown();
+
+		}
+		function postAnswer() {
+			var question = document.getElementById('askQuestion').innerHTML;
+			var answer = document.getElementById('searchField').value;
+
+			var thisArray = [question, answer];
+
+			var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function () {
+					setTimeout(function () {
+						document.getElementById('searchField').value = "Answer Questions, Earn Points";
+					}, 100);
+					getQuestion();
+				}
+				xhttp.open("GET", "postAnswer.php?r="+JSON.stringify(thisArray),false);
+				xhttp.send();
+		}
+		function postQuestion() {
+			var question = document.getElementById('searchField').value;
+			var subject = document.getElementById('subject').value;
+			var teacher = document.getElementById('teacherDrop').value;
+			
+			var array = [question, subject, teacher];
+
+			var xhttp = new XMLHttpRequest();
+		                    xhttp.onreadystatechange = function() {
+		                       setTimeout(function () {
+		                       	document.getElementById('searchField').value = 'Question Submitted.';
+		            
+		                       }, 100);
+		                       	dropdown();
+		            	  		
+		                    }
+		                    
+		                    xhttp.open("POST", "post.php?q="+JSON.stringify(array),false);
+		                    xhttp.send();
+
+		}
+		function refresh() {
+			var question = document.getElementById('questionTitle').innerHTML;
+
+			var xhttp = new XMLHttpRequest();
+							xhttp.onreadystatechange = function() {
+								document.getElementById('responses').innerHTML = this.responseText;
+							}
+							xhttp.open("GET","getAnswers.php?q="+question,false);
+							xhttp.send();
+		}
+
+		function getQuestion() {
+			var xhttp = new XMLHttpRequest();
+							xhttp.onreadystatechange = function () {
+								document.getElementById('askQuestion').innerHTML = this.responseText;
+							}
+							xhttp.open("GET","getQuestion.php?", false);
+							xhttp.send();
+		}
+
+		function dropdown() {
+			document.getElementById('parameters').zIndex = -99;
+			document.getElementById('parameters').style.opacity = 0;
+			setTimeout(function () {
+				document.getElementById('results').style.height = "70%";
+			},250);
+			
+		}
+		function dropup() {
+			document.getElementById('results').style.height = "0%";
+			setTimeout(function () {
+				document.getElementById('parameters').zIndex = 2;
+				document.getElementById('parameters').opacity = "100%";
+			}, 250);
+
+			 
+		}
+
+		function teacherMode() {
+			document.body.style.backgroundColor = "#14BEBB";
+			document.getElementById('searchField').style.opacity = 0;
+				window.setTimeout(function () {
+					document.getElementById('searchField').value = 'Search By Keyword';
+					document.getElementById('searchField').style.opacity = 1;
+				}, 300);
+
+			document.getElementById('ask').innerHTML = "Search";
+			document.getElementById('answer').innerHTML = "?";	
+
+		}
+
+		function studentMode() {
+			document.body.style.backgroundColor = "#ED695D";
+			document.getElementById('searchField').style.opacity = 0;
+				window.setTimeout(function () {
+					document.getElementById('searchField').value = 'Ask Questions, Get Answers';
+					document.getElementById('searchField').style.opacity = 1;
+				}, 300);
+
+			document.getElementById('ask').innerHTML = "Ask";
+			document.getElementById('answer').innerHTML = "Answer";	
+		}
+
+	</script>
+
+	<style type="text/css">
+		@import url("https://use.typekit.net/nuq4qnf.css");
+		body {
+			background-color: #ED695D;
+			overflow-x: hidden;
+			overflow-y: hidden;
+			width: 100vw;
+			height: 100vh;
+			color: white;
+			font-family: 'Europa', sans-serif;
+
+			-webkit-transition: background-color 1.5s ease;
+			transition: background-color 1.5s ease;
+		}
+		#mode {
+			float: right;
+			margin-top: 1vw;
+			margin-right: 3vw;
+			font-size: 1.8em;
+		}
+		#teacher, #student {
+			cursor: pointer;
+		}
+		#logo {
+			width: 45vw;
+		}
+		#main {
+			position: absolute;
+			width: 70vw;
+			height: 60vh;
+			top: 50%;
+			margin-top: -35vh;
+			left: 50%;
+			margin-left: -35vw;
+		}
+		#spacer {
+			position: relative;
+			left: 0;
+			margin-left: 2vw;
+			width: 100%;
+			height: 20%;
+		}
+		#questionSpace {
+
+			position: absolute;
+			bottom: 0;
+			margin-bottom: -1vw;
+			opacity: 0;
+
+			transition: opacity 0.5s;
+			-webkit-transition: opacity 0.5s;
+		}
+		#questionSpace h2 {
+			font-weight: lighter;
+			font-size: 1.9em;
+		}
+		#tabs div {
+			position: absolute;
+			right: 2vw;
+			margin-top: -3vw;
+			width: 10vw;
+			height: 3vw;
+			line-height: 3vw;
+			font-size: 1.6em;
+			text-align: center;
+			border-top-right-radius: 1vw;
+			border-top-left-radius: 1vw;
+			cursor: pointer;
+
+		}
+		#ask {
+			background-color: #B0E67F;
+			margin-right: 10vw;
+			z-index: 3;
+			border: solid 0.4vw;
+			border-color: rgba(239,234,89,1);
+		}
+		#answer {
+			background-color: #BA7FE6;
+			border: solid 0.4vw;
+			border-color: rgba(239,234,89,0);
+
+		}
+		#searchbar {
+			background-color: #FDF0EF;
+			position: relative;
+			width: 100%;
+			height: 16%;
+			border-radius: 1.5vw;
+			color: #717171;
+			z-index: 4;
+		}
+		input[type=text] {
+			color: #717171;
+			width: 85%;
+			border: 0;
+			background-color: rgba(255,255,255,0);
+			font-size: 2.5em;
+			left: 0;
+			margin-left: 2vw;
+			position: absolute;
+  			top: 50%;
+  			transform: translateY(-55%);
+
+  			-webkit-transition: opacity 0.3s;
+  			transition: opacity 0.3s;
+		}
+		#button {
+			width: 4vw;
+			height: 4vw;
+			border-radius: 100%;
+			background-color: #4BE1B3;
+			position: absolute;
+			right: 0;
+			top: 50%;
+			margin-top: -2vw;
+			margin-right: 1vw;
+			vertical-align: middle;
+  			border: 0;
+		}
+		input:focus,
+		select:focus,
+		textarea:focus,
+		button:focus {
+    		outline: none;
+		}
+		#parameters {
+			margin-top: 1vw;
+			left: 0;
+			margin-left: 2vw;
+			font-size: 1.6em;
+			opacity: 1;
+			-webkit-transition; opacity: 0.5s;
+			transition: opacity 0.5s;
+		}
+		.dropdown {
+			border:none;
+			background-color: rgba(0,0,0,0);
+			color: #EFEA59;
+			font-family: 'Europa';
+			font-size: 1em;
+		}
+		#results {
+			background-color: #FDF0EF;
+			width: 90%;
+			height: 0%;
+			margin-left: auto;
+			margin-right: auto;
+			z-index: -1;
+			border-bottom-right-radius: 1vw;
+			border-bottom-left-radius: 1vw;		
+			margin-top: -5vw;
+			color: #717171;
+			-webkit-transition: height 1s;
+			transition: height 1s;	
+			overflow: hidden;
+		}
+		#inner {
+			position: relative;
+			width: 85%;
+			height: 100%;
+			margin-left: 5%;
+			margin-right: 5%;
+			margin-top: 5%;
+		}
+		#responses {
+			line-height: 2em;
+		}
+		#refresh {
+			position: absolute;
+			width: 5%;
+			right: 0;
+			margin-top: -10%;
+			margin-right: 10%;
+			margin-bottom: 10%;
+
+		}
+		#refresh img{
+			width: 100%;
+		}
+		h2 {
+			font-weight: lighter;
+			font-size: 1.9em;
+		}
+		h3 {
+			font-weight: lighter;
+			font-size: 1.5em;
+			padding: 0;
+			margin: 0;
+		}
+		.noSelect {
+			-webkit-user-select: none;  /* Chrome all / Safari all */
+  			-moz-user-select: none;     /* Firefox all */
+  			-ms-user-select: none;      /* IE 10+ */
+  			user-select: none;
+		}
+		.shadow {
+			box-shadow: 3px 2px rgba(0,0,0,0.1);
+		}
+		
+	</style>
+
+</head>
+<body>
+	<div id="header">
+		<div id="mode">
+			<span id="student" class="noSelect" onclick="studentMode()">Student</span> | <span id="teacher" class="noSelect" onclick="teacherMode()">Teacher</span>
+		</div>
+	</div>
+	<div id="main">
+		<div id="logoContainer">
+		<div id="logo">
+			<img src="Assets/Logo.svg" onerror="this.src='Assets/Logo.png'; this.onerror=null;"/>
+		</div>
+			<h3>"The important thing is not to stop questioning" - Albert Einstein</h3>
+		</div>
+		<div id="spacer">
+			<div id="questionSpace">
+				<h2 id="askQuestion">The Question Will Go Here.</h2>
+			</div>
+		</div>
+		<div id="tabs" class="noSelect">
+			<div id="ask" class="shadow" onclick="tabs(0)">
+				Ask
+			</div>
+			<div id="answer" class="shadow" onclick="tabs(1)">
+				Answer
+			</div>
+		</div>
+		<div id="searchbar" class="shadow">
+			<form>
+				<input type="text" name="searchbar" autocomplete="off"
+ onfocus="this.value=''" value="Ask Questions, Get Answers" id="searchField"/>
+				
+			</form>
+			<button onclick="switchThis()" id="button"/></button>
+		</div>
+		<div id="parameters">
+			Subject 
+			<select id="subject" class="dropdown">
+		
+				
+				<optgroup label="Math">
+					<option class="dropOption" value="algebra-1">Algebra I</option>
+					<option class="dropOption" value="algebra-2">Algebra II</option>
+					<option class="dropOption" value="algebra-2h">Algebra II H</option>
+					<option class="dropOption" value="geometry">Geometry</option>
+					<option class="dropOption" value="precalc">Precalculus</option>
+
+					<option class="dropOption" value="stats-ap">AP Statistics</option>
+					<option class="dropOption" value="math-studies">Math Studies</option>
+					<option class="dropOption" value="math-sl1">Math SL I</option>
+					<option class="dropOption" value="math-hl1">Math HL I</option>
+					<option class="dropOption" value="math-sl2">Math SL II</option>
+					<option class="dropOption" value="math-hl2">Math HL II</option>
+				</optgroup>
+				<optgroup label="English">
+					<option class="dropOption" value="english-9">English 9</option>
+					<option class="dropOption" value="english-10">English 10</option>
+					<option class="dropOption" value="english-h">English 10</option>
+					<option class="dropOption" value="english-sl1">English SL I</option>
+					<option class="dropOption" value="english-hl1">English HL I</option>
+					<option class="dropOption" value="english-sl2">English SL II</option>
+					<option class="dropOption" value="english-hl2">English HL II</option>
+				</optgroup>
+				<optgroup label="Spanish">
+					<option class="dropOption" value="spanish-1">Spanish I</option>
+					<option class="dropOption" value="spanish-2">Spanish II</option>
+					<option class="dropOption" value="spanish-3">Spanish III</option>
+					<option class="dropOption" value="spanish-4">Spanish IV</option>
+					<option class="dropOption" value="spanish-ap">AP Spanish</option>
+					<option class="dropOption" value="spanish-sl1">Spanish SL I</option>
+					<option class="dropOption" value="spanish-hl1">Spanish HL I</option>
+					<option class="dropOption" value="spanish-sl2">Spanish SL II</option>
+					<option class="dropOption" value="spanish-hl2">Spanish HL II</option>
+				</optgroup>
+				<optgroup label="French">
+					<option class="dropOption" value="french-1">French I</option>
+					<option class="dropOption" value="french-2">French II</option>
+					<option class="dropOption" value="french-3">French III</option>
+					<option class="dropOption" value="french-4">French IV</option>
+					<option class="dropOption" value="french-sl1">French SL I</option>
+					<option class="dropOption" value="french-hl1">French HL I</option>
+					<option class="dropOption" value="french-hl2">French HL II</option>
+				</optgroup>
+				<optgroup label="Physics">
+					<option class="dropOption" value="physics-cp">CP Physics</option>
+					<option class="dropOption" value="physics-de">DE Physics</option>
+					<option class="dropOption" value="physics-ib">Physics SL</option>
+				</optgroup>
+				<optgroup label="Chemistry">
+					<option class="dropOption" value="chemistry-1">Chemistry I</option>
+					<option class="dropOption" value="chemistry-2">Chemistry II</option>
+					<option class="dropOption" value="chemistry-h">Chemistry H</option>
+					<option class="dropOption" value="chemistry-sl">Chemistry SL</option>
+					<option class="dropOption" value="chemistry-hl1">Chemistry HL I</option>
+					<option class="dropOption" value="chemistry-hl2">Chemistry HL II</option>
+				</optgroup>
+				<optgroup label="Biology">
+					<option class="dropOption" value="biology-1">Biology I</option>
+					<option class="dropOption" value="biology-1">Biology H</option>
+					<option class="dropOption" value="biology-hl1">Biology HL I</option>
+					<option class="dropOption" value="biology-hl2">Biology HL II</option>
+				</optgroup>
+				<optgroup label="Computer Science">
+					<option class="dropOption" value="compsci-apa">AP CS A</option>
+					<option class="dropOption" value="compsci-apprin">AP CS Principles</option>
+					<option class="dropOption" value="compsci-sl">CS SL</option>
+					<option class="dropOption" value="compsci-hl1">CS HL I</option>
+					<option class="dropOption" value="compsci-hl2">CS HL II</option>
+				</optgroup>
+				<optgroup label="History">
+					<option class="dropOption" value="civ-1">World Civ. I</option>
+					<option class="dropOption" value="civ-2">World Civ. II</option>
+					<option class="dropOption" value="history-cp">CP US History</option>
+					<option class="dropOption" value="gov-cp">CP US Gov.</option>
+					<option class="dropOption" value="gov-ap">AP US Gov.</option>
+					<option class="dropOption" value="history-sl1">US History SL</option>
+					<option class="dropOption" value="history-hl1">US History HL</option>
+					<option class="dropOption" value="history-sl2">World History SL</option>
+					<option class="dropOption" value="history-hl2">World History HL</option>
+				</optgroup>
+				<optgroup label="Other">
+					<option class="dropOption" value="ess-ib">ESS SL</option>
+					<option class="dropOption" value="econ-ib">Economics SL</option>
+					<option class="dropOption" value="design-ib">Design SL</option>
+					<option class="dropOption" value="tok-11">TOK 11</option>
+					<option class="dropOption" value="tok-12">TOK 12</option>
+				</optgroup>
+				
+			</select>
+
+			Teacher
+			<select id="teacherDrop"class="dropdown">
+				<option class="dropOption" value="albert">Sra. Albert</option>
+				<option class="dropOption" value="alcoke">Ms. Alcoke</option>
+				<option class="dropOption" value="baker">Ms. Baker</option>
+				<option class="dropOption" value="chincheck">Ms. Chincheck</option>
+				<option class="dropOption" value="deal">Mr. Deal</option>
+				<option class="dropOption" value="dean">Ms. Dean-Pratt</option>
+				<option class="dropOption" value="defazio">Dr. DeFazio</option>
+				<option class="dropOption" value="duchaj">Mr. Duchaj</option>
+				<option class="dropOption" value="eisenberg">Ms. Eisenberg</option>
+				<option class="dropOption" value="ferentinos">Mr. Ferentinos</option>
+				<option class="dropOption" value="foster">Mr. Foster</option>
+				<option class="dropOption" value="george">Mr. George</option>
+				<option class="dropOption" value="goss">Ms. Goss</option>
+				<option class="dropOption" value="harris">Mr. Harris</option>
+				<option class="dropOption" value="hawkesworth">Ms. Hawkesworth</option>
+				<option class="dropOption" value="jayson">Ms. Jayson</option>
+				<option class="dropOption" value="laub">Mr. Laub</option>
+				<option class="dropOption" value="mahony">Ms. Mahony</option>
+				<option class="dropOption" value="mecca">Dr. Mecca</option>
+				<option class="dropOption" value="pepper">Mr. Pepper</option>
+				<option class="dropOption" value="pikrallidas">Mr. Pikrallidas</option>
+				<option class="dropOption" value="planas">Sra. Planas</option>
+				<option class="dropOption" value="raeder">Ms. Raeder</option>
+				<option class="dropOption" value="sherard">Ms. Sherard</option>
+				<option class="dropOption" value="snyder">Mr. Snyder</option>
+				<option class="dropOption" value="stewart">Mr. Stewart</option>
+				<option class="dropOption" value="taylor">Ms. Taylor</option>
+				<option class="dropOption" value="vandernaald">Ms. VanderNaakd</option>
+				<option class="dropOption" value="visna">Mr. Visna</option>
+				<option class="dropOption" value="webster">Ms. Webster</option>
+				<option class="dropOption" value="weston">Ms. Weston</option>
+				<option class="dropOption" value="whitcomb">Mr. Whitcomb</option>
+			</select>
+		</div>
+		<div id="results" class="shadow" onclick="dropdown()">
+			<div id="inner">
+				<em><h2 id="questionTitle">Your Question</h2></em>
+				<h3>Answers:</h3>
+				<div id="responses">
+					No answers quite yet. Click refresh.
+				</div>
+			</div>
+				<div id= "refresh" onclick="refresh()"><img src="Assets/refresh.png"/></div>
+		</div>
+	</div>
+</body>
+</html>
